@@ -1,21 +1,23 @@
 package main
 
 import (
-	"io"
-	"log"
-	"net/http"
+	"fmt"
 
-	// "github.com/labstack/echo/v4"
-	// "github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/echo"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/infra/datastore"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/infra/router"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/registry"
 )
 
 func main() {
 
-	helloHandler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "Hello, world!\n")
-	}
+	db := datastore.NewDB()
+	r := registry.NewRegistry(db)
 
-	http.HandleFunc("/hello", helloHandler)
-    log.Println("Listing for requests at http://localhost:8000/hello")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	e := echo.New()
+	e = router.NewRouter(e, r.NewAppController())
+
+	port := "3000"
+	fmt.Println("Server listen at http://localhost" + ":" + port)
+	e.Logger.Fatal(e.Start(":" + port))
 }

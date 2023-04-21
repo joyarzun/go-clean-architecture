@@ -9,11 +9,11 @@ import (
 )
 
 type holidayRepository struct {
-	db *gorm.DB
+	db GormDB
 }
 
-func New(db *gorm.DB) usecases.HolidayRepository {
-	return &holidayRepository{db}
+func New(db GormDB) usecases.HolidayRepository {
+	return &holidayRepository{db: db}
 }
 
 type Holiday struct {
@@ -54,4 +54,9 @@ func (hr *holidayRepository) Create(u *entities.Holiday) (*entities.Holiday, err
 	}
 
 	return u, nil
+}
+
+type GormDB interface {
+	First(dest interface{}, conds ...interface{}) (tx *gorm.DB)
+	Create(value interface{}) (tx *gorm.DB)
 }

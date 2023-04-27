@@ -28,8 +28,8 @@ func (r *registry) NewAppController() controller.AppController {
 
 func (r *registry) NewHolidayController() controller.HolidayController {
 	newRepository := repository.New(r.db)
-	newpresenter := presenter.New()
-	holidayService := usecases.New(&newRepository, &newpresenter)
+	newPresenter := presenter.New()
+	holidayService := usecases.New(&newRepository, &newPresenter)
 
 	return controller.New(holidayService)
 }

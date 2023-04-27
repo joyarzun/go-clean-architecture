@@ -1,6 +1,8 @@
 package usecases
 
-import "gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
+import (
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
+)
 
 type holidayService struct {
 	HolidayRepository HolidayRepository

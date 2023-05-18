@@ -10,14 +10,10 @@ import (
 )
 
 func main() {
-
-	db := datastore.NewDB()
-	r := registry.NewRegistry(db)
-
-	e := echo.New()
-	e = router.NewRouter(e, r.NewAppController())
-
 	port := "3000"
+
+	reg := registry.NewRegistry(datastore.NewDB())
+	server := router.NewRouter(echo.New(), reg.NewAppController())
+	server.Logger.Fatal(server.Start(":" + port))
 	fmt.Println("Server listen at http://localhost" + ":" + port)
-	e.Logger.Fatal(e.Start(":" + port))
 }

@@ -3,8 +3,6 @@ module gitlab.com/joyarzun/go-clean-architecture
 go 1.19
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/jmoiron/sqlx v1.3.5
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/onsi/ginkgo/v2 v2.9.2
 	github.com/onsi/gomega v1.27.6

@@ -1,16 +1,16 @@
 package main
 
 import (
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jmoiron/sqlx"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/repository"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-)
+	"gorm.io/gorm/logger"
 
-//var db *sql.DB
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/repository"
+	"gitlab.com/joyarzun/go-clean-architecture/test/mock"
+)
 
 type dbMock struct{}
 
@@ -25,36 +25,18 @@ func (db *dbMock) Create(value interface{}) (tx *gorm.DB) {
 var _ = Describe("Repository", func() {
 
 	It("Find all by year", func() {
-		db, mock, err := sqlmock.New()
-		sqlite.Dialector{
-			DriverName: "",
-			DSN:        "",
-			Conn:       nil,
-		}
-		dialector := sqlite.Dialector{DSN: "gorm.db", Conn: sqlx.DB{DB: db}, sk}
-		gdb, err := gorm.Open(dialector, &gorm.Config{})
+		db, err := gorm.Open(sqlite.Open("mock.db"), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+
+
+		holidayRepositoryMock := repository.New(db)
+		holidayMock, err := holidayRepositoryMock.Create(&mock.Holiday)
+
+		response, err := holidayRepositoryMock.FindAllByYear(int16(2023))
+		
+		db.Delete(entities.Holiday{}, 2023)
 		Expect(err).ShouldNot(HaveOccurred())
-		defer db.Close()
-
-		holidayRepository := repository.HolidayRepository{DB: gdb}
-
-		mock.ExpectBegin()
-
-		mock.ExpectExec("UPDATE holidays").WillReturnResult(sqlmock.NewResult(1, 1))
-		mock.ExpectExec("INSERT INTO holidays").
-			WithArgs("2023", "New Year", "2023-01-01T00:00:00Z").
-			WillReturnResult(sqlmock.NewResult(1, 1))
-		mock.ExpectCommit()
-
-		rows := sqlmock.NewRows([]string{"year", "name", "date"}).
-			AddRow("2023", "New Year", "2023-01-01T00:00:00Z")
-
-		mock.ExpectQuery("^SELECT * FROM holidays").WillReturnRows(rows)
-		mock.ExpectCommit()
-
-		response, err := holidayRepository.FindAllByYear(int16(2023))
-
-		Expect(err).ShouldNot(HaveOccurred())
-		Expect(response).Should(Not(BeEmpty()))
+		Expect(response[0]).To(Equal(holidayMock))
 	})
 })

@@ -12,23 +12,12 @@ import (
 	"gitlab.com/joyarzun/go-clean-architecture/test/mock"
 )
 
-type dbMock struct{}
-
-func (db *dbMock) Find(dest interface{}, conds ...interface{}) (tx *gorm.DB) {
-	return &gorm.DB{}
-}
-
-func (db *dbMock) Create(value interface{}) (tx *gorm.DB) {
-	return &gorm.DB{}
-}
-
 var _ = Describe("Repository", func() {
 
 	It("Find all by year", func() {
 		db, err := gorm.Open(sqlite.Open("mock.db"), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		})
-
 
 		holidayRepositoryMock := repository.New(db)
 		holidayMock, err := holidayRepositoryMock.Create(&mock.Holiday)

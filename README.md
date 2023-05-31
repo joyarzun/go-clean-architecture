@@ -42,6 +42,25 @@ curl --request GET \
   --url http://localhost:3000/holiday/2023
 ```
 
+## Main tasks
+
+Principal tasks are included in the makefile:
+
+- Test: `make test`
+- Test with coverage: `make testcov`
+- Open coverage html report: `make opencov`
+- Show coverage result: `make showcov`
+- Go vet, the golang analizer for suspicious constructs: `make govet`
+- Staticcheck, state of the art linter for the Go: `make staticcheck`
+
+**Most of these tasks will be running on the CI pipeline**
+
+For use the _staticcheck_ you will need:
+
+```bash
+  go install honnef.co/go/tools/cmd/staticcheck@latest
+```
+
 ## Based on
 
 - [Clean Architecture with go](https://manakuro.medium.com/clean-architecture-with-go-bce409427d31)

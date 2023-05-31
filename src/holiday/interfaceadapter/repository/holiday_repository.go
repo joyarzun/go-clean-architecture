@@ -3,9 +3,10 @@ package repository
 import (
 	"time"
 
+	"gorm.io/gorm"
+
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
-	"gorm.io/gorm"
 )
 
 type HolidayRepository struct {

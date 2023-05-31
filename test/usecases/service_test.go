@@ -3,11 +3,12 @@ package main_test
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"gorm.io/gorm"
+
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/repository"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
 	"gitlab.com/joyarzun/go-clean-architecture/test/mock"
-	"gorm.io/gorm"
 )
 
 type holidayPresenter struct{}

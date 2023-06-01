@@ -27,7 +27,7 @@ var _ = Describe("Repository", func() {
 		}
 
 		holidayRepositoryMock := repository.New(db)
-		holidayMock, err := holidayRepositoryMock.Create(&mock.Holiday)
+		holidayMock, _ := holidayRepositoryMock.Create(&mock.Holiday)
 		response, err := holidayRepositoryMock.FindAllByYear(int16(2023))
 
 		db.Delete(entities.Holiday{}, 2023)

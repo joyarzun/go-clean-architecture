@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"gorm.io/driver/sqlite"
@@ -19,13 +21,18 @@ var _ = Describe("Repository", func() {
 			Logger: logger.Default.LogMode(logger.Info),
 		})
 
+		_ = db.Exec("CREATE TABLE `holidays` (`id` INTEGER PRIMARY KEY,`year` INTEGER NOT NULL,`name` TEXT NOT NULL,`date` TEXT NOT NULL)")
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		holidayRepositoryMock := repository.New(db)
 		holidayMock, err := holidayRepositoryMock.Create(&mock.Holiday)
-
 		response, err := holidayRepositoryMock.FindAllByYear(int16(2023))
-		
+
 		db.Delete(entities.Holiday{}, 2023)
+
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(response[0]).To(Equal(holidayMock))
+		Expect(response[0]).To(BeEquivalentTo(holidayMock))
 	})
 })

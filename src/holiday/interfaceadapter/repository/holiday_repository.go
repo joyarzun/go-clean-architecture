@@ -3,17 +3,18 @@ package repository
 import (
 	"time"
 
+	"gorm.io/gorm"
+
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
-	"gorm.io/gorm"
 )
 
-type holidayRepository struct {
-	db GormDB
+type HolidayRepository struct {
+	DB GormDB
 }
 
 func New(db GormDB) usecases.HolidayRepository {
-	return &holidayRepository{db: db}
+	return &HolidayRepository{DB: db}
 }
 
 type Holiday struct {
@@ -21,12 +22,12 @@ type Holiday struct {
 	Date string `json:"date"`
 }
 
-func (hr *holidayRepository) FindAllByYear(year int16) ([]*entities.Holiday, error) {
+func (hr *HolidayRepository) FindAllByYear(year int16) ([]*entities.Holiday, error) {
 	var dbHoliday []Holiday
 	var parsedDate time.Time
 	var holidays []*entities.Holiday
 
-	result := hr.db.Find(&dbHoliday, "year = ?", year)
+	result := hr.DB.Find(&dbHoliday, "year = ?", year)
 	err := result.Error
 
 	if err != nil {
@@ -46,8 +47,9 @@ func (hr *holidayRepository) FindAllByYear(year int16) ([]*entities.Holiday, err
 	return holidays, nil
 }
 
-func (hr *holidayRepository) Create(u *entities.Holiday) (*entities.Holiday, error) {
-	err := hr.db.Create(u).Error
+func (hr *HolidayRepository) Create(u *entities.Holiday) (*entities.Holiday, error) {
+	result := hr.DB.Create(u)
+	err := result.Error
 
 	if err != nil {
 		return nil, err
@@ -57,7 +59,6 @@ func (hr *holidayRepository) Create(u *entities.Holiday) (*entities.Holiday, err
 }
 
 type GormDB interface {
-	First(dest interface{}, conds ...interface{}) (tx *gorm.DB)
 	Find(dest interface{}, conds ...interface{}) (tx *gorm.DB)
 	Create(value interface{}) (tx *gorm.DB)
 }

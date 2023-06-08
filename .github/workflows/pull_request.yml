@@ -42,4 +42,4 @@ jobs:
         uses: joyarzun/go-testcoverage-action@v1
         with:
           use-ginkgo: true
-          coverage-threshold: 40
+          coverage-threshold: 80

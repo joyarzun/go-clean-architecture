@@ -1,8 +1,9 @@
 package mock
 
 import (
-	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"time"
+
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 )
 
 var Year = int16(2023)
@@ -10,7 +11,7 @@ var Year = int16(2023)
 var Holiday = entities.Holiday{
 	Year: 2023,
 	Name: "a",
-	Date: time.Now(),
+	Date: time.Date(2023, time.January, 01, 00, 00, 00, 00, time.UTC),
 }
 
 var Holidays = []*entities.Holiday{

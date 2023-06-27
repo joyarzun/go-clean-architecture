@@ -2,23 +2,30 @@
 
 Project to show clean architecture in Go using a Holidays backend example
 
+## Requirements
+
+```bash
+  brew install go
+  brew install sqlite
+```
+
 ## Usage
 
 **Create a SQLlite table on _gorm.db_ file**
 
-```sql
-CREATE TABLE holidays (
-	id INTEGER PRIMARY KEY,
-	year INTEGER NOT NULL,
-	name TEXT NOT NULL,
-	date TEXT NOT NULL
-);
+```bash
+sqlite3 gorm.db 'CREATE TABLE holidays ( id INTEGER PRIMARY KEY, year INTEGER NOT NULL, name TEXT NOT NULL, date TEXT NOT NULL );'
 ```
 
-**Install go and run the example**
+**(Optional) Create a holiday record**
 
 ```bash
-  brew install go
+sqlite3 gorm.db "INSERT INTO holidays VALUES (1, 2024, 'Example', '2024-01-01 00:00:00+00:00')"
+```
+
+**Run the example**
+
+```bash
   go run main.go
 ```
 
@@ -69,10 +76,10 @@ For use the _staticcheck_ you will need:
 
 We will not explore the details of the architecture here, but we will explain how this example follow the clean diagram.
 
-Inside `src` folder we are separating folder following [domain groups idea](https://www.youtube.com/watch?v=y3MWfPDmVqo&t=905s). This tiny example only have one (holiday). Each folder have a Clean Architecture structure like:
+Inside `src` folder we are separating folder following [domain groups idea](https://www.youtube.com/watch?v=y3MWfPDmVqo&t=905s). This tiny example only have one domain (holiday). Each domain folder have a Clean Architecture structure like:
 
-- `entities`: Contains the business rules and entities
-- `usecases`: Contains the exposed features or use cases that the business need
+- `entities`: Contains the business rules and entities. Holiday entity is compound of a Name and the holiday Date
+- `usecases`: Contains the exposed features or use cases that the business need. For example, it is exposed the Holiday Creation and Retrieve
 - `interfaceadapter`: Contains the http controllers and its own details that use the features exposed by `usecases`
 - `registry`: Part of _frameworks and drivers_. Contains the details to generate the web controller
 - `infra`: Contains the details of DB and Router implementation

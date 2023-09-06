@@ -84,10 +84,6 @@ Inside `src` folder we are separating folder following [domain groups idea](http
 - `registry`: Part of _frameworks and drivers_. Contains the details to generate the web controller
 - `infra`: Contains the details of DB and Router implementation
 
-## TODO
-
-- `interfaceadapter` controller have dependency on `echo.Context` that is part of the web framework
-
 ## Based on
 
 - [Clean Architecture by Uncle Bob (Robert C. Martin)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)

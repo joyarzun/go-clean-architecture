@@ -19,3 +19,11 @@ type RequestHoliday struct {
 	entities.Holiday
 	Date Timestamp `json:"date"`
 }
+
+func (r *RequestHoliday) ToHoliday() *entities.Holiday {
+	return &entities.Holiday{
+		Name: r.Name,
+		Year: r.Year,
+		Date: time.Time(r.Date),
+	}
+}

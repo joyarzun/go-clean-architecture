@@ -3,10 +3,7 @@ package controller
 import (
 	"net/http"
 	"strconv"
-	"time"
 
-	"github.com/labstack/echo"
-	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
 )
 
@@ -15,15 +12,15 @@ type holidayController struct {
 }
 
 type HolidayController interface {
-	GetHolidays(c echo.Context) error
-	CreateHoliday(c echo.Context) error
+	GetHolidays(c httpContext) error
+	CreateHoliday(c httpContext) error
 }
 
 func New(us usecases.HolidayService) HolidayController {
 	return &holidayController{us}
 }
 
-func (hc *holidayController) GetHolidays(c echo.Context) error {
+func (hc *holidayController) GetHolidays(c httpContext) error {
 	year, err := strconv.Atoi(c.Param("year"))
 	if err != nil {
 		return err
@@ -37,21 +34,17 @@ func (hc *holidayController) GetHolidays(c echo.Context) error {
 	return c.JSON(http.StatusOK, holidays)
 }
 
-func (hc *holidayController) CreateHoliday(c echo.Context) error {
+func (hc *holidayController) CreateHoliday(c httpContext) error {
 
 	requestHoliday := new(RequestHoliday)
 	if err := c.Bind(requestHoliday); err != nil {
 		return err
 	}
-	holiday := entities.Holiday{
-		Name: requestHoliday.Name,
-		Year: requestHoliday.Year,
-		Date: time.Time(requestHoliday.Date),
-	}
-	holidayy, err := hc.holidayService.Create(&holiday)
+
+	holiday, err := hc.holidayService.Create(requestHoliday.ToHoliday())
 
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, holidayy)
+	return c.JSON(http.StatusCreated, holiday)
 }

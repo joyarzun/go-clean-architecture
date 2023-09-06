@@ -3,10 +3,8 @@ package controller
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/labstack/echo"
-	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
 )
 
@@ -43,15 +41,11 @@ func (hc *holidayController) CreateHoliday(c echo.Context) error {
 	if err := c.Bind(requestHoliday); err != nil {
 		return err
 	}
-	holiday := entities.Holiday{
-		Name: requestHoliday.Name,
-		Year: requestHoliday.Year,
-		Date: time.Time(requestHoliday.Date),
-	}
-	holidayy, err := hc.holidayService.Create(&holiday)
+
+	holiday, err := hc.holidayService.Create(requestHoliday.ToHoliday())
 
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusCreated, holidayy)
+	return c.JSON(http.StatusCreated, holiday)
 }

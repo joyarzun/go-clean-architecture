@@ -1,22 +1,22 @@
 package registry
 
 import (
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/infra/datastore"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/controller"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/presenter"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/repository"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
-	"gorm.io/gorm"
 )
 
 type registry struct {
-	db *gorm.DB
+	db datastore.Storei
 }
 
 type Registry interface {
 	NewAppController() controller.AppController
 }
 
-func NewRegistry(db *gorm.DB) Registry {
+func NewRegistry(db datastore.Storei) Registry {
 	return &registry{db}
 }
 

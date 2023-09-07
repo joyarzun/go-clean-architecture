@@ -1,45 +1,43 @@
 package main
 
 import (
-	"log"
+	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/infra/datastore"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/repository"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
 	"gitlab.com/joyarzun/go-clean-architecture/test/mock"
 )
 
-var db *gorm.DB
-var err error
+var db datastore.Storei
 var holidayRepositoryMock usecases.HolidayRepository
 var holidayMock *entities.Holiday
 
-var _ = Describe("Repository", func() {
+var _ = Describe("Repository", Ordered, func() {
 
-	BeforeEach(func() {
-		db, err = gorm.Open(sqlite.Open("mock.db"), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
-		})
-
-		_ = db.Exec("CREATE TABLE `holidays` (`id` INTEGER PRIMARY KEY,`year` INTEGER NOT NULL,`name` TEXT NOT NULL,`date` TEXT NOT NULL)")
+	BeforeAll(func() {
+		db = datastore.New("mock.db")
+		db.Exec("CREATE TABLE `holidays` (`id` INTEGER PRIMARY KEY,`year` INTEGER NOT NULL,`name` TEXT NOT NULL,`date` TEXT NOT NULL)")
+		err := db.Error()
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		holidayRepositoryMock = repository.New(db)
 	})
 
 	When("There is at least one holiday registered on database", func() {
-
 		BeforeEach(func() {
-			holidayMock, _ = holidayRepositoryMock.Create(&mock.Holiday)
+			var err error
+			holidayMock, err = holidayRepositoryMock.Create(&mock.Holiday)
+			if err != nil {
+				panic(err)
+			}
 		})
 
 		It("Find all by year", func() {
@@ -50,7 +48,6 @@ var _ = Describe("Repository", func() {
 	})
 
 	When("There is no holiday registered on database", func() {
-
 		It("Find all by year", func() {
 			response, _ := holidayRepositoryMock.FindAllByYear(int16(2023))
 			Expect(response).To(BeNil())
@@ -59,5 +56,12 @@ var _ = Describe("Repository", func() {
 
 	AfterEach(func() {
 		db.Delete(entities.Holiday{}, 2023)
+	})
+
+	AfterAll(func() {
+		err := os.Remove("mock.db")
+		if err != nil {
+			panic(err)
+		}
 	})
 })

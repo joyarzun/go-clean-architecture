@@ -34,13 +34,16 @@ func (hr *HolidayRepository) FindAllByYear(year int16) ([]*entities.Holiday, err
 
 	for _, dbh := range dbHoliday {
 		parsedDate, err = time.Parse("2006-01-02 15:04:05+00:00", dbh.Date)
-		if err == nil {
-			holidays = append(holidays, &entities.Holiday{
-				Year: dbh.Year,
-				Name: dbh.Name,
-				Date: parsedDate,
-			})
+
+		if err != nil {
+			return nil, err
 		}
+
+		holidays = append(holidays, &entities.Holiday{
+			Year: dbh.Year,
+			Name: dbh.Name,
+			Date: parsedDate,
+		})
 	}
 	return holidays, nil
 }

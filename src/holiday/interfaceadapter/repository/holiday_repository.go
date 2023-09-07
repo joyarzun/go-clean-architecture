@@ -3,17 +3,15 @@ package repository
 import (
 	"time"
 
-	"gorm.io/gorm"
-
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
 	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/usecases"
 )
 
 type HolidayRepository struct {
-	DB GormDB
+	DB Repository
 }
 
-func New(db GormDB) usecases.HolidayRepository {
+func New(db Repository) usecases.HolidayRepository {
 	return &HolidayRepository{DB: db}
 }
 
@@ -27,8 +25,8 @@ func (hr *HolidayRepository) FindAllByYear(year int16) ([]*entities.Holiday, err
 	var parsedDate time.Time
 	var holidays []*entities.Holiday
 
-	result := hr.DB.Find(&dbHoliday, "year = ?", year)
-	err := result.Error
+	hr.DB.Find(&dbHoliday, "year = ?", year)
+	err := hr.DB.Error()
 
 	if err != nil {
 		return nil, err
@@ -48,17 +46,12 @@ func (hr *HolidayRepository) FindAllByYear(year int16) ([]*entities.Holiday, err
 }
 
 func (hr *HolidayRepository) Create(u *entities.Holiday) (*entities.Holiday, error) {
-	result := hr.DB.Create(u)
-	err := result.Error
+	hr.DB.Create(u)
+	err := hr.DB.Error()
 
 	if err != nil {
 		return nil, err
 	}
 
 	return u, nil
-}
-
-type GormDB interface {
-	Find(dest interface{}, conds ...interface{}) (tx *gorm.DB)
-	Create(value interface{}) (tx *gorm.DB)
 }

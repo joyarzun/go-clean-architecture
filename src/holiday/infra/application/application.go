@@ -12,7 +12,7 @@ import (
 func Run() {
 	port := "3000"
 
-	reg := registry.NewRegistry(datastore.NewDB())
+	reg := registry.NewRegistry(datastore.New(datastore.DBFILE))
 	server := router.NewRouter(echo.New(), reg.NewAppController())
 	server.Logger.Fatal(server.Start(":" + port))
 	fmt.Println("Server listen at http://localhost" + ":" + port)

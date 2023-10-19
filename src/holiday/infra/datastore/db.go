@@ -1,11 +1,8 @@
 package datastore
 
 import (
-	"log"
-
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/entities"
+	"gitlab.com/joyarzun/go-clean-architecture/src/holiday/interfaceadapter/repository"
 )
 
 const DBFILE = "gorm.db"
@@ -19,37 +16,49 @@ type Storei interface {
 }
 
 type Store struct {
-	DB *gorm.DB
+	DB  map[string]*repository.Holiday
+	err error
 }
 
 func New(dbfile string) Storei {
-	DB, err := gorm.Open(sqlite.Open(dbfile), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	return &Store{DB}
+	DB := make(map[string]*repository.Holiday)
+	return &Store{DB: DB}
 }
 
 func (s *Store) Find(dest interface{}, conds ...interface{}) {
-	s.DB.Find(dest, conds)
+	year := conds[1].(int16)
+	result := make([]repository.Holiday, 0)
+	for _, v := range s.DB {
+		if v.Year == year {
+			result = append(result, *v)
+		}
+	}
+	*dest.(*[]repository.Holiday) = result
 }
 
 func (s *Store) Create(value interface{}) {
-	s.DB.Create(value)
+	s.DB[value.(*entities.Holiday).Name] = EntityToRepository(value.(*entities.Holiday))
 }
 
 func (s *Store) Error() error {
-	return s.DB.Error
+	return s.err
 }
 
 func (s *Store) Exec(sql string) {
-	s.DB.Exec(sql)
+
 }
 
 func (s *Store) Delete(value interface{}, conds ...interface{}) {
-	s.DB.Delete(value, conds)
+	year := conds[0].(int16)
+	for _, v := range s.DB {
+		if v.Year == year {
+			delete(s.DB, v.Name)
+		}
+	}
+}
+
+func EntityToRepository(e *entities.Holiday) *repository.Holiday {
+	return &repository.Holiday{
+		Holiday: *e, Date: e.Date.Format("2006-01-02 15:04:05+00:00"),
+	}
 }

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -20,8 +18,7 @@ var holidayMock *entities.Holiday
 var _ = Describe("Repository", Ordered, func() {
 
 	BeforeAll(func() {
-		db = datastore.New("mock.db")
-		db.Exec("CREATE TABLE `holidays` (`id` INTEGER PRIMARY KEY,`year` INTEGER NOT NULL,`name` TEXT NOT NULL,`date` TEXT NOT NULL)")
+		db = datastore.New("")
 		err := db.Error()
 
 		if err != nil {
@@ -55,13 +52,7 @@ var _ = Describe("Repository", Ordered, func() {
 	})
 
 	AfterEach(func() {
-		db.Delete(entities.Holiday{}, 2023)
+		db.Delete(entities.Holiday{}, int16(2023))
 	})
 
-	AfterAll(func() {
-		err := os.Remove("mock.db")
-		if err != nil {
-			panic(err)
-		}
-	})
 })
